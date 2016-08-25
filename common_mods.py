@@ -23,6 +23,7 @@ def Today():
     return format(today.year, '04') + '-' + format(today.month, '02') + '-' + format(today.day, '02')
 
 def month_converter(month):
+    '''Returns Month of the Year using a 3 character Month (eg. 'Jan' returns 1) '''
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return months.index(month) + 1
 
@@ -30,7 +31,8 @@ def Parse_Dates(dates_list):
     new_list = []    
     for date in dates_list:
         date = date.split('/')
-        new_list.append(date[2] + '-' + date[0] + '-' + date[1])
+        date[0] = '00' + date[0]
+        new_list.append(date[0][-2:] + '-' + date[1] + '-' + date[2])
     return new_list
 
 def get_reported_dates(stock):
@@ -44,7 +46,7 @@ def get_reported_dates(stock):
     dates = []
     for row in income_statement_rows:   
         row = str(row)
-        if Match('<th>\d/\d+/\d+', row):
+        if Match('<th>\d/\d+/\d+', row):            
                 dates.append(row.replace('<th>', '').replace('</th>', ''))
     dates = str(dates[0]), str(dates[1]), str(dates[2])
     dates = Parse_Dates(dates)
@@ -124,11 +126,13 @@ def Is_Negative(lst):
 #print Is_Negative(test_lst)
                   
 #stock = 'goog'
-###print get_reported_dates('aapl')
+#print get_reported_dates('aapl')
 #print get_balance_sheet(stock, 'Common Stocks')
 #print get_balance_sheet(stock, '>Long-Term Debt')
 #print get_balance_sheet(stock, 'Treasury Stock')
 #t0day = Today()
 #print type(t0day)
 #print get_reported_dates('aapl')
+#num = 'Sep'
+#print month_converter(num)
 

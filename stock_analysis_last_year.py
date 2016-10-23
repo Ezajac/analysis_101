@@ -5,9 +5,6 @@ Created on Sat Aug 06 07:18:43 2016
 @author: eczaj
 """
 
-
-
-
 import numpy as np
 import collections
 import scipy.stats as sct

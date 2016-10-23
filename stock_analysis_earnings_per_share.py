@@ -8,7 +8,6 @@ Created on Fri Jul 01 12:24:13 2016
 import requests
 from bs4 import BeautifulSoup as bs
 import datetime
-import json
 import common_mods as mods
 import collections
 
@@ -43,42 +42,49 @@ def Get_EPS(stock):
     #tag = '<tr class="mainRow"> \
     #<td class="rowTitle"><a data-ref="ratio_Eps1YrAnnualGrowth" href="#"><span class="expand"></span></a> EPS (Basic)</td>'
     
-    i = 0
-    for row in market_watch_rows:
-        row = str(row)
-        i += 1
-        if mods.Match('<tr class="mainRow">\n(.*?)EPS \(Diluted\)', row):
-            row = row.split('<td class="valueCell">')
-            last_reported_eps, second_reported_eps, third_reported_eps =  float(row[5][0:4].strip()), float(row[4][0:4].strip()), float(row[3][0:4].strip())
+    #i = 0
+    try:
+        for row in market_watch_rows:
+            row = str(row)
+            if mods.Match('<tr class="mainRow">\n(.*?)EPS \(Diluted\)', row):
+                row = row.split('<td class="valueCell">')
+                last_reported_eps, second_reported_eps, third_reported_eps =  float(row[5][0:4].strip()), float(row[4][0:4].strip()), float(row[3][0:4].strip())
     
-    #Get Dates for Last Three Reported Years
-    last_reported_dt, year_before_reported_dt, two_yr_before_reported_dt = mods.get_reported_dates(stock)
-    print mods.get_reported_dates(stock)
-    is_positive_eps = False
-    now = datetime.datetime.now()
-    if int(last_reported_dt[0:2]) - now.month < 6:
-        
-        if eps_12month > second_reported_eps and second_reported_eps > third_reported_eps:
-            is_positive_eps = True
-    # Time since last annual reported revenue was less than 6 months
-    else:
-        if last_reported_eps > second_reported_eps and second_reported_eps > third_reported_eps:
-            is_positive_eps = True
-    '''
-    '''
-    #Create Ditionary of Results
-    results = collections.OrderedDict()
-    results['stock'] = stock    
-    results['Data'] = 'EPS'
-    results['Date Run'] = mods.Today()
-    results['EPS_Test'] = is_positive_eps
-    results[last_reported_dt] = last_reported_eps
-    results[year_before_reported_dt] = second_reported_eps
-    results[two_yr_before_reported_dt] = third_reported_eps
-    results['12 Month Reported EPS'] = eps_12month
+   
+        #Get Dates for Last Three Reported Years
+        last_reported_dt, year_before_reported_dt, two_yr_before_reported_dt = mods.get_reported_dates(stock)
+        #print mods.get_reported_dates(stock)
+        is_positive_eps = False
+        now = datetime.datetime.now()
+        if int(last_reported_dt[0:2]) - now.month < 6:
+            
+            if eps_12month > second_reported_eps and second_reported_eps > third_reported_eps:
+                is_positive_eps = True
+        # Time since last annual reported revenue was less than 6 months
+        else:
+            if last_reported_eps > second_reported_eps and second_reported_eps > third_reported_eps:
+                is_positive_eps = True
+        '''
+        '''
+        #Create Ditionary of Results
+        results = collections.OrderedDict()
+        results['stock'] = stock    
+        results['TestRun'] = 'EPS'
+        results['DateRun'] = mods.Today()
+        results['Result'] = is_positive_eps
+        results[last_reported_dt] = last_reported_eps
+        results[year_before_reported_dt] = second_reported_eps
+        results[two_yr_before_reported_dt] = third_reported_eps
+        results['12 Month Reported EPS'] = eps_12month
+        return results
     
-    results = json.dumps(results)
-    return results
+    except:
+        results = collections.OrderedDict()
+        results['stock'] = stock
+        results['TestRun'] = 'EPS'
+        results['DateRun'] = mods.Today()
+        results['Result'] = 'Test Failed'
+        return results
 
 #Testing:
 #stock = 'AAPL'

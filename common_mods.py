@@ -41,7 +41,7 @@ def get_reported_dates(stock):
     income_statement_web = requests.get(income_statement)
     income_statement_text = income_statement_web.content
     
-    income_statement_soup = bs(income_statement_text)
+    income_statement_soup = bs(income_statement_text, "lxml")
     income_statement_rows = income_statement_soup.findAll('th')    
     dates = []
     for row in income_statement_rows:   
@@ -58,7 +58,7 @@ def income_statement_wrangler(stock, attribute):
     income_statement_web = requests.get(income_statement)
     income_statement_text = income_statement_web.content
     
-    income_statement_soup = bs(income_statement_text)
+    income_statement_soup = bs(income_statement_text, "lxml")
     
     income_statement_rows = income_statement_soup.findAll('tr')
     i = 0
@@ -77,7 +77,7 @@ def get_net_income(stock, attribute):
     income_statement_web = requests.get(income_statement)
     income_statement_text = income_statement_web.content
     
-    income_statement_soup = bs(income_statement_text)
+    income_statement_soup = bs(income_statement_text, "lxml")
     
     income_statement_rows = income_statement_soup.findAll('tr')
     i = 0
@@ -110,17 +110,19 @@ def get_balance_sheet(stock, attribute):
 
 def Day_of_Week(dt_var):
     return parser.parse(dt_var).strftime('%a')
-
-def Insert_Data(connection, database, collection, json):
-    client = MongoClient(connection)
-    db = client.database
-    db.collection.insert(json)
-    
+ 
 def Is_Negative(lst):
     for i in range(len(lst)):
         if lst[i][0] == '(':
             lst[i] = lst[i].replace('(', '-').replace(')', '')
     return lst
+    
+def Insert_Data(database, collection, json_data):
+    client = MongoClient('mongodb://localhost:27017')    
+    db = client[database]
+    db[collection].insert(json_data)
+    print 'Inserted JSON into: ' + database + ', collection:' + collection
+    
             
 #test_lst = ['(5)', '6', '(7)', '8']
 #print Is_Negative(test_lst)
@@ -135,4 +137,8 @@ def Is_Negative(lst):
 #print get_reported_dates('aapl')
 #num = 'Sep'
 #print month_converter(num)
+#test_json = {"Date Run": "2016-09-28", "Revenue_Test": True, "2015-9-26": 233715000.0, "2014-9-27": 182795000.0, "2013-9-28": 170910000.0}
+#datab = 'test'
+#collect = 'test2'
+#Insert_Json(datab, collect, test_json)
 

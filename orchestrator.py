@@ -5,7 +5,7 @@ Created on Wed Aug 17 18:14:22 2016
 @author: eczaj
 """
 
-import common_mods as mods
+import helper.common_mods as mods
 import collections
 #Test 1
 import stock_analysis_revenue as revenue

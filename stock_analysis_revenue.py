@@ -8,7 +8,7 @@ Created on Fri Jul 01 12:24:13 2016
 import requests
 from bs4 import BeautifulSoup as bs
 import collections
-import common_mods as mods
+import helper.common_mods as mods
 
 def Get_Revenue(stock):
     '''Go to Yahoo Finance and Pull the Last Three Years of Revenue Results and Determine if Revenue Passes or Fails Test.
